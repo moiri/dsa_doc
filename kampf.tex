@@ -1,0 +1,107 @@
+% -*-mode: Latex-*-
+% !TEX root = kampf.tex
+% authors: simon maurer
+%
+% file: kampf.tex
+% contents: root file with packages and includes
+% Sccs-Id: %W% %G%
+
+
+%\documentclass[12pt,a4paper,twoside]{article}
+%\documentclass[11pt]{article}
+%\documentclass[10pt,twocolumn,pa4]{article}
+\documentclass[10pt]{article}
+
+%\usepackage{times} %use Times font instead of the default, saving significant space
+\usepackage[utf8]{inputenc}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{hangcaption}
+%\usepackage{html}
+\usepackage{url}
+\usepackage{epic}     %extended picture environment
+\usepackage{eepic}    %extended picture environment
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\usepackage{eufrak}  %for use of font 'euler fraktur', needed when no amsfonts
+\usepackage{xspace}
+\usepackage{array}
+%\usepackage{multirow}
+\usepackage{titlesec} %does not work with llncs.sty
+\usepackage{ifthen}
+\usepackage{setspace} %to be used instead of doublespace.sty
+% \usepackage{todo}     %to support teamwork and revisioning.
+% \usepackage{misc}
+% \usepackage{fixfig}
+%%%%\usepackage[colorlinks,dvipdfm,a4paper]{hyperref}
+\usepackage{color}    %needed by xfig/latex figures
+%\usepackage{tikz}     %used for "pgf-tex" export of Dia drawings
+\usepackage{hyperref} % For hyperlinks in the PDF
+\usepackage{longtable}
+
+
+%% --------------------------------------------------------------------------
+%% --------------------------------------------------------------------------
+%% --------------------------------------------------------------------------
+
+\pagestyle{empty}
+%\includeonly{}
+
+\hyphenation{time-stamped}
+
+% Text styles
+\newcommand\textStyleSF[1]{\textit{#1}}
+\newcommand\textStyleAT[1]{\textit{#1}}
+\newcommand\textStyleStrongEmphasis[1]{\textbf{#1}}
+
+
+
+%% --------------------------------------------------------------------------
+%% --------------------------------------------------------------------------
+%% --------------------------------------------------------------------------
+
+\begin{document}
+%\begin{spacing}{2.0}
+%\begin{spacing}{1.5}
+\begin{spacing}{1.0}
+
+% title, authors, and abstract
+\input{title}
+
+% add page numbers in draft document
+\pagestyle{plain}
+
+% Include chapters
+\input{chap/intro}
+\input{chap/wunden}
+\input{chap/qvat}
+\input{chap/ini}
+\input{chap/allgKampf}
+\input{chap/bSF}
+\input{chap/bAT}
+%\input{chap/bPA}
+%\input{chap/uSF}
+%\input{chap/uAT}
+%\input{chap/uPA}
+%\input{chap/uSpez}
+%\input{chap/aktion}
+
+%% summary and conclusion
+%\input{conclusion}
+%
+%% acknowledgements
+%%\subsection*{Acknowledgments}
+%% We would like to thank XXX, YYY, ZZZ,
+%%, and the anonymous reviewers
+%% for their valuable comments on earlier versions of this paper.
+%
+%%\bibliography{kampf}
+%%\bibliography{externals/bibtex/paper}
+%%\bibliographystyle{plain}
+%
+%\cleardoublepage
+%\appendix
+%\input{tmp} % some thoughts around the topic of the paper
+
+\end{spacing}
+\end{document}
