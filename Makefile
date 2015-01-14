@@ -43,11 +43,9 @@ DIA_PGFTEX_SRC  = \
 
 BITMP_PDF_SRC	= \
 
-BIB_SRC		= $(PROJECT).bib
-
 #==================================================================
 
-SOURCES		= $(MAINTEXSRC) $(TEX_SRC) $(BIB_SRC) $(PDF_SRC)
+SOURCES		= $(MAINTEXSRC) $(TEX_SRC) $(PDF_SRC)
 
 BUILTPDF	= $(OBJSRC:.obj=.pdf) $(PLOTSRC:.gnu=.pdf) \
 		  $(FIG_PDF_SRC:.fig=.pdf) \
@@ -60,7 +58,6 @@ BUILTPDF	= $(OBJSRC:.obj=.pdf) $(PLOTSRC:.gnu=.pdf) \
 #==================================================================
 
 LATEX		= pdflatex
-BIBTEX		= bibtex
 SPELLPRG	= aspell -C -t -d british -p ./aspell_personal.txt -c
 ##		  opts for aspell: -d deutsch british american
 BITMP2PDF	= convert  #http://www.imagemagick.org/script/convert.php
@@ -120,17 +117,16 @@ BITMP2PDF	= convert  #http://www.imagemagick.org/script/convert.php
 
 #==================================================================
 
-.PHONY: all latex bib
+.PHONY: all latex
 all: $(PROJECT).pdf
 
-latex: $(SOURCES) $(BIB_SRC) $(BUILTPDF) $(ADD_DEPS)
+latex: $(SOURCES) $(BUILTPDF) $(ADD_DEPS)
 	$(LATEX) $(MAINTEXSRC)
 
 $(PROJECT).aux: $(PROJECT).pdf
 
-$(PROJECT).pdf: $(SOURCES) $(BIB_SRC) $(BUILTPDF) $(ADD_DEPS)
+$(PROJECT).pdf: $(SOURCES) $(BUILTPDF) $(ADD_DEPS)
 	$(LATEX) $(MAINTEXSRC)  
-##	$(BIBTEX) $(PROJECT) 
 	$(LATEX) $(MAINTEXSRC)
 	@cnt='0;'; \
 	while grep -s "Rerun to get cross-references right" $(PROJECT).log ; \
@@ -141,23 +137,16 @@ $(PROJECT).pdf: $(SOURCES) $(BIB_SRC) $(BUILTPDF) $(ADD_DEPS)
 		$(LATEX) $< ;\
 	done 
 
-bib: $(BIB_SRC) $(PROJECT).aux
-	@for i in *.aux; do echo "processing bibtex $$i..."; bibtex $$i; done
-
 #==================================================================
 
 
 #==================================================================
 
-.PHONY: spell updatebib status update commit sync count
+.PHONY: spell status update commit sync count
 .PHONY: work edit view help clean
 
 spell: $(MAINTEXSRC) $(TEX_SRC)
 	for i in $(MAINTEXSRC) $(TEX_SRC); do $(SPELLPRG) $$i; done
-
-updatebib:
-	ssh raimund@luna.vmars.tuwien.ac.at '(cd ~/paper/eigene/bibtex/trunk && svn update)'
-	scp raimund@luna.vmars.tuwien.ac.at:paper/eigene/bibtex/trunk/paper/paper.bib ./raimund.bib
 
 status:
 	svn status
@@ -191,7 +180,6 @@ help:
 	@echo "Supported targets:"
 	@echo "  all:          create \"$(PROJECT).pdf\""
 	@echo "  spell:        perform spell check"
-	@echo "  updatebib:    update the file \"raimund.bib\""
 	@echo "  svn commands: status update commit sync"
 	@echo "  count:        print statistics: nr. of pages, lines, words, chars"
 	@echo "  help:         print this message"
