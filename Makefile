@@ -10,13 +10,9 @@ EXTERNALSUPDATE =
 MAINTEXSRC	= $(PROJECT).tex
 TEX_SRC		= \
 		title.tex \
-		chap/intro.tex \
-		chap/wunden.tex \
-		chap/qvat.tex \
-		chap/ini.tex \
-		chap/allgKampf.tex \
-		chap/bSF.tex \
-		chap/bAT.tex \
+		chap/* \
+		sf/* \
+		aktion/* \
 
 FIGDIR		= ./fig
 
