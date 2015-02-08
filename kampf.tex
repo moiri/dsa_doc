@@ -30,6 +30,8 @@
 \newcommand\textStyleTa[1]{\textit{#1}} % style used for Talente
 \newcommand\textStyleStrongEmphasis[1]{\textbf{#1}}
 
+\renewcommand{\contentsname}{Inhaltsverzeichnis}
+
 %% --------------------------------------------------------------------------
 %% --------------------------------------------------------------------------
 %% --------------------------------------------------------------------------
@@ -43,18 +45,20 @@
 \pagestyle{plain}
 
 % Include chapters
+\tableofcontents
 \input{chap/intro}
 \input{chap/wunden}
 \input{chap/qvat}
 \input{chap/ini}
 \input{chap/allgKampf}
-\input{chap/bSF}
 \input{chap/bAT}
 \input{chap/bPA}
+\input{chap/fkM}
+\input{chap/sf}
 %\input{chap/uSF}
 %\input{chap/uAT}
 %\input{chap/uPA}
 %\input{chap/uSpez}
-%\input{chap/aktion}
+\input{chap/aktion}
 
 \end{document}
