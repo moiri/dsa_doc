@@ -7,7 +7,7 @@
 % Sccs-Id: %W% %G%
 
 
-\documentclass[10pt]{article}
+\documentclass[10pt]{report}
 
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
@@ -26,11 +26,14 @@
 \newcommand\textStyleSF[1]{\textit{#1}} % style used for SFs
 \newcommand\textStyleM[1]{\textit{#1}}  % style used for Manöver
 \newcommand\textStyleVT[1]{\textit{#1}} % style used for Vorteile
+%\newcommand\textStyleAT[1]{\raisebox{10pt}{\textit{#1}}} % style used for Autotreffer/Aktionnen
 \newcommand\textStyleAT[1]{\textit{#1}} % style used for Autotreffer/Aktionnen
 \newcommand\textStyleTa[1]{\textit{#1}} % style used for Talente
 \newcommand\textStyleStrongEmphasis[1]{\textbf{#1}}
 
+% reanme constants
 \renewcommand{\contentsname}{Inhaltsverzeichnis}
+\renewcommand{\figurename}{Abbildung}
 
 %% --------------------------------------------------------------------------
 %% --------------------------------------------------------------------------
@@ -42,7 +45,7 @@
 \input{title}
 
 % add page numbers in draft document
-\pagestyle{plain}
+\pagestyle{headings}
 
 % Include chapters
 \tableofcontents
