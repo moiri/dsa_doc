@@ -13,6 +13,7 @@ TEX_SRC		= \
 		chap/* \
 		sf/* \
 		aktion/* \
+		reaktion/* \
 
 FIGDIR		= ./fig
 
