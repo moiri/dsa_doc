@@ -13,6 +13,7 @@
 <script src="plugin/jquery/jquery.js" type="text/javascript"></script>
 <script src="plugin/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="js/latex2html.js" type="text/javascript"></script>
+<script src="js/test.js" type="text/javascript"></script>
 </head>
 <body>
 <div class="container">
