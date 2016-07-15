@@ -15,7 +15,9 @@
 <script src="js/latex2html.js" type="text/javascript"></script>
 </head>
 <body>
-<div id="sf1" class="container-fluid">
+<div class="container">
+    <div id="box"></div>
+    <div id="chap"></div>
 </div>
 </body>
 </html>

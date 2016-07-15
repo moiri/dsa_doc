@@ -1,5 +1,6 @@
+var regExChapter = /\\chapter\{([^}]+)\}/;
 var regExSection = /\\section\{([^}]+)\}/;
-var regExIgnores = /(\\label\{([^}]+)\}|\\hfill \\\\)/;
+var regExIgnores = /(\\label\{([^}]+)\}|\\hfill \\\\|%.+)/;
 var regExDesc = /\\begin\{description}/;
 var regExEndDesc = /\\end\{description}/;
 var regExItem = /\\item[\s]?\[([^}]+)\]/;
@@ -18,7 +19,8 @@ $(document).ready(function() {
     // printDoc( 'sf', 'beidhaendiger_kampf', 'sf1' );
     // printDoc( 'sf', 'berittener_schuetze', 'sf1' );
     // printDoc( 'sf', 'betaeubungsschlag', 'sf1' );
-    // printDoc( 'sf', 'binden', 'sf1' );
+    printDoc( 'chap', 'wunden', 'chap' );
+    printDoc( 'sf', 'binden', 'box' );
     // printDoc( 'sf', 'blindkampf', 'sf1' );
     // printDoc( 'sf', 'defensiver_kampfstil', 'sf1' );
     // printDoc( 'sf', 'doppelangriff', 'sf1' );
@@ -32,7 +34,7 @@ $(document).ready(function() {
     // printDoc( 'sf', 'halbschwert', 'sf1' );
     // printDoc( 'sf', 'hammerschlag', 'sf1' );
     // printDoc( 'sf', 'improvisierte_waffen', 'sf1' );
-    printDoc( 'sf', 'kampfgespuer', 'sf1' );
+    // printDoc( 'sf', 'kampfgespuer', 'sf1' );
     // printDoc( 'sf', 'kampf_im_wasser', 'sf1' );
     // printDoc( 'sf', 'kampfreflexe', 'sf1' );
     // printDoc( 'sf', 'klingensturm', 'sf1' );
@@ -74,7 +76,7 @@ function printDoc( path, name, id ) {
 
 function createDoc( folder, file ) {
     var path = '../' + folder + '/' + file + '.tex';
-    var doc = $( '<div class="doc"></div>' );
+    var doc = $( '<div class="doc cont-root"></div>' );
     $.ajax({
         async: false,
         type: 'GET',
@@ -104,46 +106,63 @@ function removeIgnores( line ) {
 function appendDocLine( line, dest ) {
     var matches = null;
     var listElem = null;
-    if( ( matches = regExSection.exec( line ) ) != null ) {
+    if( ( matches = regExChapter.exec( line ) ) != null ) {
+        dest = getParentRootDest( dest );
+        dest.append('<h2>' + matches[1] + '</h2>');
+    }
+    else if( ( matches = regExSection.exec( line ) ) != null ) {
+        dest = getParentRootDest( dest );
         dest.append('<h3>' + matches[1] + '</h3>');
         dest = createDocText( dest );
     }
     else if( ( matches = regExDesc.exec( line ) ) != null ) {
-        dest = $('<div class="list-group"></div>').appendTo( dest );
-    }
-    else if( ( matches = regExBullet.exec( line ) ) != null ) {
-        dest = $('<ul class="list-bullet"></ul>').appendTo( dest );
-    }
-    else if( ( matches = regExEndBullet.exec( line ) ) != null )
-        dest = dest.parents( '.list-group-item,.doc' ).first();
-    else if( ( matches = regExEndDesc.exec( line ) ) != null ) {
-        dest = dest.parents( '.list-bullet-text,.doc' ).first();
+        dest = getParentRootDest( dest );
+        dest = $('<dl class="dl-horizontal cont-root"></dl>').appendTo( dest );
     }
     else if( ( matches = regExItem.exec( line ) ) != null ) {
-        dest = dest.parents( '.list-bullet-text,.doc' ).first();
-        listElem = $('<div class="list-group-item"></div>')
-        listElem.append('<h4 class="list-group-item-heading">' + matches[1] + '</h4>' );
-        dest.append( listElem );
+        dest = getParentRootDest( dest, true );
+        dest.append('<dt>' + matches[1] + '</dt>' );
         line = line.replace( regExItem, "" );
-        dest = $('<p class="list-group-item-text">' + line + '</p>' ).appendTo( listElem );
+        dest = $('<dd class="list-desc-text cont-text cont-root">' + line
+            + '</dd>' ).appendTo( dest );
+    }
+    else if( ( matches = regExEndDesc.exec( line ) ) != null ) {
+        dest = dest.parent().parent();
+    }
+    else if( ( matches = regExBullet.exec( line ) ) != null ) {
+        dest = getParentRootDest( dest );
+        dest = $('<ul class="list-bullet cont-root"></ul>').appendTo( dest );
     }
     else if( ( matches = regExItemBullet.exec( line ) ) != null ) {
+        dest = getParentRootDest( dest, true );
         line = line.replace( regExItemBullet, "" );
-        dest = $( '<li class="list-bullet-text">' + line + '</li>' ).appendTo( dest );
+        dest = $( '<li class="list-bullet-text cont-text cont-root">' + line
+            + '</li>' ).appendTo( dest );
     }
-    else if( dest.hasClass( 'list-group-item-text' ) )
-        dest.append( ' ' + line );
-    else if( dest.hasClass( 'list-bullet-text' ) )
-        dest.append( ' ' + line );
-    else if( dest.hasClass( 'doc-text' ) ) {
-        if( line === "" ) dest = createDocText( dest );
+    else if( ( matches = regExEndBullet.exec( line ) ) != null ) {
+        dest = dest.parent().parent();
+    }
+    else if( dest.hasClass( 'cont-text' ) ) {
+        if( line === "" ) {
+            dest = getParentRootDest( dest );
+            dest = createDocText( dest );
+        }
         dest.append( ' ' + line );
     }
     return dest;
 }
 
+function getParentRootDest( dest, exclusive ) {
+    if( exclusive === undefined ) exclusive = false;
+    if( exclusive && dest.hasClass( 'cont-text' ) )
+        dest = dest.parent();
+    if( !dest.hasClass( 'cont-root' ) )
+        dest = dest.parents( '.cont-root' ).first();
+    return dest;
+}
+
 function createDocText( dest ) {
-    return $('<p class="doc-text"></p>').appendTo( dest );
+    return $('<p class="doc-text cont-text"></p>').appendTo( dest );
 }
 
 function replaceNameref( line ) {
