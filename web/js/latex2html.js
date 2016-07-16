@@ -12,6 +12,7 @@ var regExStyleLink = /\\textStyle(M|SF)\{([^}]+)\}/g;
 var regExStyle = /\\textStyle(VT|AT|Ta)\{([^}]+)\}/g;
 var regExStyleBold = /\\textStyleStrongEmphasis\{([^}]+)\}/g;
 var regExMath = /\\textrm\{[\s]?\$\{(.*?)\}\$[\s]?\}/g;
+var regExNL = /\\newline/g;
 var math = [];
 math["\\leq"] = ' &le; ';
 math["\\geq"] = ' &ge; ';
@@ -32,6 +33,7 @@ function createDoc( folder, file ) {
         type: 'GET',
         url: path,
         success: function( data ) {
+            data = replaceNL( data );
             var lines = data.split("\n");
             var dest = doc;
             $.each( lines, function( n, line ) {
@@ -105,7 +107,7 @@ function appendDocLine( line, dest ) {
 
 function getParentRootDest( dest, exclusive ) {
     if( exclusive === undefined ) exclusive = false;
-    if( exclusive && dest.hasClass( 'cont-text' ) )
+    while( exclusive && dest.hasClass( 'cont-text' ) )
         dest = dest.parent();
     if( !dest.hasClass( 'cont-root' ) )
         dest = dest.parents( '.cont-root' ).first();
@@ -152,6 +154,14 @@ function replaceMath( line ) {
     var matches = null;
     if( ( matches = regExMath.exec( line ) ) != null ) {
         line = line.replace( regExMath, math[ matches[1].trim() ] );
+    }
+    return line;
+}
+
+function replaceNL( line ) {
+    var matches = null;
+    if( ( matches = regExNL.exec( line ) ) != null ) {
+        line = line.replace( regExNL, "\n\n" );
     }
     return line;
 }
