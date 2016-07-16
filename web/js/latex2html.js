@@ -20,7 +20,7 @@ function printDoc( path, name, id ) {
 }
 
 function createDoc( folder, file ) {
-    var path = '../' + folder + '/' + file + '.tex';
+    var path = __PATH + folder + '/' + file + '.tex';
     var doc = $( '<div class="doc cont-root"></div>' );
     $.ajax({
         async: false,
@@ -144,7 +144,7 @@ function replaceStyles( line ) {
 
 function getTitle( folder, file ) {
     var title = null;
-    var path = '../' + folder + '/' + file + '.tex';
+    var path = __PATH + folder + '/' + file + '.tex';
     $.ajax({
         async: false,
         type: 'GET',

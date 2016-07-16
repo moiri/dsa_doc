@@ -1,3 +1,5 @@
+var __PATH = '../';
+
 $(document).ready(function() {
     // printDoc( 'sf', 'aufmerksamkeit', 'sf1' );
     // printDoc( 'sf', 'ausfall', 'sf1' );
