@@ -54,6 +54,7 @@ function appendDocLine( line, dest ) {
     if( ( matches = regExChapter.exec( line ) ) != null ) {
         dest = getParentRootDest( dest );
         dest.append('<h2>' + matches[1] + '</h2>');
+        dest = createDocText( dest );
     }
     else if( ( matches = regExSection.exec( line ) ) != null ) {
         dest = getParentRootDest( dest );
