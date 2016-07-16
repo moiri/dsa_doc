@@ -10,6 +10,11 @@ var regExItemBullet = /\\item/;
 var regExNameref = /\\nameref\{([^}]+)\}/g;
 var regExStyleLink = /\\textStyle(M|SF)\{([^}]+)\}/g;
 var regExStyle = /\\textStyle(VT|AT|Ta)\{([^}]+)\}/g;
+var regExStyleBold = /\\textStyleStrongEmphasis\{([^}]+)\}/g;
+var regExMath = /\\textrm\{[\s]?\$\{(.*?)\}\$[\s]?\}/g;
+var math = [];
+math["\\leq"] = ' &le; ';
+math["\\geq"] = ' &ge; ';
 
 function printDoc( path, name, id ) {
     $( '#' + id ).html( createDoc( path, name ) );
@@ -32,8 +37,8 @@ function createDoc( folder, file ) {
             $.each( lines, function( n, line ) {
                 line = removeIgnores( line );
                 line = replaceNameref( line );
-                line = replaceStylesLink( line );
                 line = replaceStyles( line );
+                line = replaceMath( line );
                 dest = appendDocLine( line, dest );
             });
         }
@@ -123,16 +128,6 @@ function replaceNameref( line ) {
     return line;
 }
 
-function replaceStylesLink( line ) {
-    var matches = null;
-    if( ( matches = regExStyleLink.exec( line ) ) != null )
-        line = line.replace( regExStyleLink,
-            function( regExStr, type, name ) {
-                return '<a class="link-' + type + '" href="#">' + name + '</a>';
-        } );
-    return line;
-}
-
 function replaceStyles( line ) {
     var matches = null;
     if( ( matches = regExStyle.exec( line ) ) != null )
@@ -140,6 +135,24 @@ function replaceStyles( line ) {
             function( regExStr, type, name ) {
                 return '<span class="span-' + type + '">' + name + '</span>';
         } );
+    if( ( matches = regExStyleLink.exec( line ) ) != null )
+        line = line.replace( regExStyleLink,
+            function( regExStr, type, name ) {
+                return '<a class="link-' + type + '" href="#">' + name + '</a>';
+        } );
+    if( ( matches = regExStyleBold.exec( line ) ) != null )
+        line = line.replace( regExStyleBold,
+            function( regExStr, name ) {
+                return '<strong>' + name + '</strong>';
+        } );
+    return line;
+}
+
+function replaceMath( line ) {
+    var matches = null;
+    if( ( matches = regExMath.exec( line ) ) != null ) {
+        line = line.replace( regExMath, math[ matches[1].trim() ] );
+    }
     return line;
 }
 
