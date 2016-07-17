@@ -177,7 +177,8 @@ function getTitle( folder, file ) {
             var lines = data.split("\n");
             $.each( lines, function( n, elem ) {
                 var matches = null;
-                if( ( matches = regExSection.exec( elem ) ) != null ) {
+                if( ( ( matches = regExChapter.exec( elem ) ) != null ) ||
+                    ( ( matches = regExSection.exec( elem ) ) != null ) ) {
                     title = matches[1];
                     return false;
                 }
