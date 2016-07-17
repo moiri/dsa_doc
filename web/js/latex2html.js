@@ -7,7 +7,7 @@ var regExItem = /\\item[\s]?\[([^}]+)\]/;
 var regExBullet = /\\begin\{itemize}/;
 var regExEndBullet = /\\end\{itemize}/;
 var regExItemBullet = /\\item/;
-var regExNameref = /\\nameref\{([^}]+)\}/g;
+var regExNameref = /\\(name|)ref\{([^}]+)\}/g;
 var regExStyleLink = /\\textStyle(M|SF)\{([^}]+)\}/g;
 var regExStyle = /\\textStyle(VT|AT|Ta)\{([^}]+)\}/g;
 var regExStyleBold = /\\textStyleStrongEmphasis\{([^}]+)\}/g;
@@ -19,7 +19,7 @@ math["\\geq"] = ' &ge; ';
 
 function printDoc( path, name, id ) {
     $( '#' + id ).html( createDoc( path, name ) );
-    $('span[id|="link"]').click( function( e ) {
+    $('a[id|="link"]').click( function( e ) {
         var path = $( this ).attr( 'id' ).split( '-' );
         printDoc( path[1], path[2], id );
     });
@@ -121,11 +121,11 @@ function createDocText( dest ) {
 function replaceNameref( line ) {
     var matches = null;
     if( ( matches = regExNameref.exec( line ) ) != null )
-        line = line.replace( regExNameref, function( regExStr, name ) {
+        line = line.replace( regExNameref, function( regExStr, type, name ) {
             var names = name.split( '.' );
             var title = getTitle( names[0], names[1] );
             var id = 'link-' + names[0] + '-' + names[1];
-            return '<span id="' + id + '">' + title + '</span>';
+            return '<a href=# id="' + id + '">' + title + '</a>';
         } );
     return line;
 }
@@ -140,7 +140,7 @@ function replaceStyles( line ) {
     if( ( matches = regExStyleLink.exec( line ) ) != null )
         line = line.replace( regExStyleLink,
             function( regExStr, type, name ) {
-                return '<a class="link-' + type + '" href="#">' + name + '</a>';
+                return name;
         } );
     if( ( matches = regExStyleBold.exec( line ) ) != null )
         line = line.replace( regExStyleBold,
