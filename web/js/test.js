@@ -8,16 +8,15 @@ $(document).ready(function() {
         var path = $( this ).attr( 'id' ).split( '-' );
         printDoc( path[1], path[2], id );
     });
-    $.get('query.json', function( data ) {
-        $input.typeahead({
-            source:data,
-            autoSelect: true,
-            displayText: function( item ){
-                return ( item.folder === "sf" ) ? item.name + " (SF)" : item.name;
-            },
-            afterSelect: function(){ $input.val(''); $input.blur(); }
-        });
-    }, 'json' );
+    var j_index = getIndex();
+    $input.typeahead({
+        source:j_index,
+        autoSelect: true,
+        displayText: function( item ){
+            return ( item.folder === "sf" ) ? item.name + " (SF)" : item.name;
+        },
+        afterSelect: function(){ $input.val(''); $input.blur(); }
+    });
     $input.change(function() {
         var current = $input.typeahead("getActive");
         printDoc( current.folder, current.file, id );

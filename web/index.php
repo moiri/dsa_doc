@@ -23,7 +23,6 @@
         <p>Alternative Kampfregeln, inspiriert durch <a href="http://www.wiki-aventurica.de/wiki/QVAT">QVAT</a> aus längst vergangen DSA 3.0 Zeiten (<a href="app-doc/kampf.pdf">PDF</a>).</p>
         <p>Typos und Inhaltliche Fehler bitte <a href="https://github.com/moiri/dsa_doc/issues">hier</a> erfassen.</p>
     </div>
-    <div class="panel panel-default"><div class="panel-body">
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
@@ -41,24 +40,22 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Inhalt<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
 <?php
 $string = file_get_contents( "index.json" );
 $json_a = json_decode( $string, true );
-foreach( $json_a as $chap ) {
-    echo '
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$chap["title"].'<span class="caret"></span></a>
-                            <ul class="dropdown-menu">';
-    foreach( $chap['items'] as $item ) {
+foreach( $json_a as $item ) {
+    if( $item['folder'] == "chap" )
         echo '
-                                <li><a href="#doc-item" id="toc-'.$chap['folder'].'-'.$item['file'].'">'.$item['name'].'</a></li>';
-    }
-    echo '
-                            </ul>
-                        </li>';
+                                <li><a href="#doc-item" id="toc-'.$item['folder'].'-'.$item['file'].'">'.$item['name'].'</a></li>';
 }
 ?>
+                            </ul>
+                        </li>
                     </ul>
+
                     <form class="navbar-form navbar-right">
                         <div class="form-group">
                             <input id="query" type="text" class="form-control" placeholder="Search" data-provide="typeahead" autocomplete="off">
@@ -67,8 +64,11 @@ foreach( $json_a as $chap ) {
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->
         </nav>
-        <div class="" id="chap"><a name="doc-item"></a></div>
-    </div></div>
+    <div class="panel panel-default">
+        <div class="panel-body" style="padding-top:0px">
+            <div class="" id="chap"></div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

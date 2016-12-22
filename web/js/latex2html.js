@@ -21,6 +21,7 @@ math["\\geq"] = ' &ge; ';
 
 function printDoc( path, name, id ) {
     $( '#' + id ).html( createDoc( path, name ) );
+    $('.sect-subtitle').html( getTitle( 'chap', path ) );
     $('a[id|="link"]').click( function( e ) {
         var path = $( this ).attr( 'id' ).split( '-' );
         printDoc( path[1], path[2], id );
@@ -30,6 +31,15 @@ function printDoc( path, name, id ) {
 function createDoc( folder, file ) {
     var path = __PATH + folder + '/' + file + '.tex';
     var doc = $( '<div class="doc cont-root"></div>' );
+    $.ajax({
+        dataType: 'json',
+        async: false,
+        type: 'GET',
+        url: 'index.json',
+        success: function( data ) {
+            index = data;
+        }
+    });
     $.ajax({
         async: false,
         type: 'GET',
@@ -45,15 +55,6 @@ function createDoc( folder, file ) {
                 line = replaceMath( line );
                 dest = appendDocLine( line, dest );
             });
-        }
-    });
-    $.ajax({
-        dataType: 'json',
-        async: false,
-        type: 'GET',
-        url: 'query.json',
-        success: function( data ) {
-            index = data;
         }
     });
     return doc;
@@ -80,7 +81,7 @@ function appendDocLine( line, dest ) {
     }
     else if( ( matches = regExSection.exec( line ) ) != null ) {
         dest = getParentRootDest( dest );
-        dest.append('<h3>' + matches[1] + '</h3>');
+        dest.append('<h3>' + matches[1] + ' <small class="sect-subtitle"></small></h3>');
         dest = createDocText( dest );
     }
     else if( ( matches = regExInput.exec( line ) ) != null ) {
@@ -189,7 +190,7 @@ function replaceNL( line ) {
 }
 
 function getTitle( folder, file ) {
-    var title = null;
+    var title = "";
     $.each( index, function( idx, item ) {
         if( ( item.file == file ) && ( item.folder == folder ) ) {
             title = item.name;
@@ -200,7 +201,7 @@ function getTitle( folder, file ) {
 }
 
 function getTitleFromFile( folder, file ) {
-    var title = null;
+    var title = "";
     var path = __PATH + folder + '/' + file + '.tex';
     $.ajax({
         async: false,
