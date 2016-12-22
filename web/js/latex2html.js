@@ -1,5 +1,6 @@
 var regExChapter = /\\chapter\{([^}]+)\}/;
 var regExSection = /\\section\{([^}]+)\}/;
+var regExInput = /\\input\{([^}]+)\}/;
 var regExIgnores = /(\\label\{([^}]+)\}|\\hfill \\\\|%.+)/;
 var regExDesc = /\\begin\{description}/;
 var regExEndDesc = /\\end\{description}/;
@@ -14,6 +15,7 @@ var regExStyleBold = /\\textStyleStrongEmphasis\{([^}]+)\}/g;
 var regExMath = /\\textrm\{[\s]?\$\{(.*?)\}\$[\s]?\}/g;
 var regExNL = /\\newline/g;
 var math = [];
+var index = null;
 math["\\leq"] = ' &le; ';
 math["\\geq"] = ' &ge; ';
 
@@ -45,7 +47,20 @@ function createDoc( folder, file ) {
             });
         }
     });
+    $.ajax({
+        dataType: 'json',
+        async: false,
+        type: 'GET',
+        url: 'query.json',
+        success: function( data ) {
+            index = data;
+        }
+    });
     return doc;
+}
+
+function getIndex() {
+    return index;
 }
 
 function removeIgnores( line ) {
@@ -66,6 +81,13 @@ function appendDocLine( line, dest ) {
     else if( ( matches = regExSection.exec( line ) ) != null ) {
         dest = getParentRootDest( dest );
         dest.append('<h3>' + matches[1] + '</h3>');
+        dest = createDocText( dest );
+    }
+    else if( ( matches = regExInput.exec( line ) ) != null ) {
+        dest = getParentRootDest( dest );
+        var ids = matches[1].split( '/' );
+        dest.append( '<a href=# id="link-' + ids[0] + '-' + ids[1] + '">'
+            + getTitle( ids[0], ids[1] ) + '</a>' );
         dest = createDocText( dest );
     }
     else if( ( matches = regExDesc.exec( line ) ) != null ) {
@@ -167,6 +189,17 @@ function replaceNL( line ) {
 }
 
 function getTitle( folder, file ) {
+    var title = null;
+    $.each( index, function( idx, item ) {
+        if( ( item.file == file ) && ( item.folder == folder ) ) {
+            title = item.name;
+            return false;
+        }
+    })
+    return title;
+}
+
+function getTitleFromFile( folder, file ) {
     var title = null;
     var path = __PATH + folder + '/' + file + '.tex';
     $.ajax({
