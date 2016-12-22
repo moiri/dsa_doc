@@ -1,0 +1,11 @@
+# lol_team default apache configuration
+# change ___path___ to the location of the project
+
+Alias /dsa-doc/tex /home/moiri/Documents/git-dsa-doc
+Alias /dsa-doc /home/moiri/Documents/git-dsa-doc/web
+
+<Directory "/home/moiri/Documents/git-dsa-doc">
+    Options MultiViews
+    Options FollowSymLinks
+    Require all granted
+</Directory>

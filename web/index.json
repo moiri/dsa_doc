@@ -1,4 +1,4 @@
-{[
+[
     {
         "title": "Kampfregeln",
         "folder": "chap",
@@ -122,4 +122,4 @@
             { "file": "wuchtschlag", "name": "Wuchtschlag" }
         ]
     }
-]}
+]

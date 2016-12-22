@@ -17,8 +17,41 @@
 </head>
 <body>
 <div class="container">
-    <div id="box"></div>
-    <div id="chap"></div>
+    <div class="jumbotron">
+        <h1>Kampfregeln - kurz skizziert</h1>
+        <p>Alternative Kampfregeln, inspiriert durch <a href="http://www.wiki-aventurica.de/wiki/QVAT">QVAT</a> aus längst vergangen DSA 3.0 Zeiten (<a href="app-doc/kampf.pdf">PDF</a>).</p>
+        <p>Typos und Inhaltliche Fehler bitte <a href="https://github.com/moiri/dsa_doc/issues">hier</a> erfassen.</p>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="btn-group" role="group">
+                <button id="toc-chap-intro" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                </button>
+<?php
+$string = file_get_contents( "index.json" );
+$json_a = json_decode( $string, true );
+foreach( $json_a as $chap ) {
+    echo '
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default dropdown-toggle" aria-expanded="false" data-toggle="dropdown" type="button">
+                        '.$chap["title"].'
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">';
+    foreach( $chap['items'] as $item ) {
+        echo '
+                        <li><a href="#doc-item" id="toc-'.$chap['folder'].'-'.$item['file'].'">'.$item['name'].'</a></li>';
+    }
+    echo '
+                    </ul>
+                </div>';
+}
+?>
+            </div>
+            <div class="" id="chap"><a name="doc-item"></a></div>
+        </div>
+    </div>
 </div>
 </body>
 </html>
