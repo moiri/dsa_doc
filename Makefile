@@ -12,8 +12,8 @@ TEX_SRC		= \
 		title.tex \
 		chap/* \
 		sf/* \
-		aktion/* \
-		reaktion/* \
+		bAT/* \
+		bPA/* \
 
 FIGDIR		= ./fig
 
