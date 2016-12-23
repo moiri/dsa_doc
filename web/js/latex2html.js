@@ -7,6 +7,8 @@ var regExEndDesc = /\\end\{description}/;
 var regExItem = /\\item[\s]?\[([^}]+)\]/;
 var regExBullet = /\\begin\{itemize}/;
 var regExEndBullet = /\\end\{itemize}/;
+var regExFig = /\\begin\{figure}/;
+var regExEndFig = /\\end\{figure}/;
 var regExItemBullet = /\\item/;
 var regExNameref = /\\(name|)ref\{([^}]+)\}/g;
 var regExStyleLink = /\\textStyle(M|SF)\{([^}]+)\}/g;
@@ -119,6 +121,12 @@ function appendDocLine( line, dest ) {
     }
     else if( ( matches = regExEndBullet.exec( line ) ) != null ) {
         dest = dest.parent().parent();
+    }
+    else if( ( matches = regExFig.exec( line ) ) != null ) {
+        dest = $('<div class="hidden"></div>').appendTo( dest );
+    }
+    else if( ( matches = regExEndFig.exec( line ) ) != null ) {
+        dest = dest.parent()
     }
     else if( dest.hasClass( 'cont-text' ) ) {
         if( line === "" ) {
