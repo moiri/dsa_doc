@@ -20,7 +20,10 @@
 <div class="container">
     <div class="jumbotron">
         <h1>Kampfregeln - kurz skizziert</h1>
-        <p>Alternative Kampfregeln, inspiriert durch <a href="http://www.wiki-aventurica.de/wiki/QVAT">QVAT</a> aus längst vergangen DSA 3.0 Zeiten (<a href="app-doc/kampf.pdf">PDF</a>).</p>
+        <p>Alternative Kampfregeln
+            <a href="tex/kampf.pdf"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>,
+            inspiriert durch <a href="http://www.wiki-aventurica.de/wiki/QVAT">QVAT</a> aus längst vergangen DSA 3.0 Zeiten.
+        </p>
         <p>Typos und Inhaltliche Fehler bitte <a href="https://github.com/moiri/dsa_doc/issues">hier</a> erfassen.</p>
     </div>
         <nav class="navbar navbar-default">
@@ -52,6 +55,25 @@ foreach( $json_a as $item ) {
                                 <li><a href="#doc-item" id="toc-'.$item['folder'].'-'.$item['file'].'">'.$item['name'].'</a></li>';
 }
 ?>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">SF-Baum<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="tex/fig/bSF.pdf">
+                                    <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                                    Bewaffnete SFs</a>
+                                </li>
+                                <li><a href="tex/fig/uSF.pdf">
+                                    <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                                    Unbewaffnete SFs</a>
+                                </li>
+                                <li><a href="tex/fig/fkSF.pdf">
+                                    <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                                    Fernkampf SFs</a>
+                                </li>
                             </ul>
                         </li>
                     </ul>

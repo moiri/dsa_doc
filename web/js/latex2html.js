@@ -16,6 +16,8 @@ var regExMath = /\\textrm\{[\s]?\$\{(.*?)\}\$[\s]?\}/g;
 var regExNL = /\\newline/g;
 var math = [];
 var index = null;
+var figFolder = "fig";
+var figPath = "tex/" + figFolder + "/";
 math["\\leq"] = ' &le; ';
 math["\\geq"] = ' &ge; ';
 
@@ -145,10 +147,18 @@ function replaceNameref( line ) {
     var matches = null;
     if( ( matches = regExNameref.exec( line ) ) != null )
         line = line.replace( regExNameref, function( regExStr, type, name ) {
+            var title = '';
+            var href = '#';
             var names = name.split( '.' );
-            var title = getTitle( names[0], names[1] );
             var id = 'link-' + names[0] + '-' + names[1];
-            return '<a href=# id="' + id + '">' + title + '</a>';
+            if( names[0] == figFolder ) {
+                title = '<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>';
+                id = '';
+                href = figPath + names[1] + ".pdf";
+            }
+            else
+                title = getTitle( names[0], names[1] );
+            return '<a href="' + href + '" id="' + id + '">' + title + '</a>';
         } );
     return line;
 }

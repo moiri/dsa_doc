@@ -11,9 +11,9 @@ $(document).ready(function() {
     var j_index = getIndex();
     $input.typeahead({
         source:j_index,
-        autoSelect: true,
         displayText: function( item ){
-            return ( item.folder === "sf" ) ? item.name + " (SF)" : item.name;
+            // return ( item.folder === "sf" ) ? item.name + " (SF)" : item.name;
+            return item.name + ' (' + item.folder + ')';
         },
         afterSelect: function(){ $input.val(''); $input.blur(); }
     });
