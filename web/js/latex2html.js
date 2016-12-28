@@ -26,9 +26,10 @@ math["\\geq"] = ' &ge; ';
 function printDoc( path, name, id ) {
     $( '#' + id ).html( createDoc( path, name ) );
     var backLink = '';
-    if( path != 'chap' )
+    var subTitle = getTitle( 'chap', path );
+    if( subTitle != '' )
         backLink = '<a href="#" id="link-chap-' + path + '"> <span style="transform: scale(-1, 1)" class="glyphicon glyphicon-share-alt"></span></a>';
-    $('.sect-subtitle').html( getTitle( 'chap', path ) + backLink );
+    $('.sect-subtitle').html( subTitle + backLink );
     $('a[id|="link"]').click( function( e ) {
         var path = $( this ).attr( 'id' ).split( '-' );
         printDoc( path[1], path[2], id );
