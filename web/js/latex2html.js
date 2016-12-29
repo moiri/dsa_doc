@@ -11,7 +11,7 @@ function Doc( $target, index_path ) {
 
     function createDoc( folder, file ) {
         var path = that.config.doc_path + folder + '/' + file + '.tex';
-        var doc = $( '<div class="doc cont-root"></div>' );
+        var doc = $( '<div class="doc cont-root cont-root-0"></div>' );
         $.ajax({
             async: false,
             type: 'GET',
@@ -123,19 +123,19 @@ function Parser( index ) {
     regEx.chapter = /\\chapter\{([^}]+)\}/;
     regEx.section = /\\section\{([^}]+)\}/;
     regEx.input = /\\input\{([^}]+)\}/;
-    regEx.ignores = /(\\label\{([^}]+)\}|\\hfill \\\\|%.+)/;
-    regEx.desc = /\\begin\{description}/;
-    regEx.endDesc = /\\end\{description}/;
-    regEx.item = /\\item[\s]?\[([^}]+)\]/;
-    regEx.bullet = /\\begin\{itemize}/;
-    regEx.endBullet = /\\end\{itemize}/;
-    regEx.fig = /\\begin\{figure}/;
-    regEx.endFig = /\\end\{figure}/;
-    regEx.itemBullet = /\\item/;
+    regEx.ignores = /(\\label\{([^}]+)\}|\\hfill \\\\|%.*)/;
+    regEx.desc_begin = /\\begin\{description}/;
+    regEx.desc_end = /\\end\{description}/;
+    regEx.desc_elem = /\\item[\s]?\[([^}]+)\]/;
+    regEx.item_begin = /\\begin\{itemize}/;
+    regEx.item_end = /\\end\{itemize}/;
+    regEx.item_elem = /\\item/;
+    regEx.fig_begin = /\\begin\{figure}/;
+    regEx.fig_end = /\\end\{figure}/;
     regEx.nameref = /\\(name|)ref\{([^}]+)\}/g;
-    regEx.styleLink = /\\textStyle(M|SF)\{([^}]+)\}/g;
-    regEx.style = /\\textStyle(VT|AT|Ta)\{([^}]+)\}/g;
-    regEx.styleBold = /\\textStyleStrongEmphasis\{([^}]+)\}/g;
+    regEx.style_link = /\\textStyle(M|SF)\{([^}]+)\}/g;
+    regEx.style_emph = /\\textStyle(VT|AT|Ta)\{([^}]+)\}/g;
+    regEx.style_bold = /\\textStyleStrongEmphasis\{([^}]+)\}/g;
     regEx.math = /\\textrm\{[\s]?\$\{(.*?)\}\$[\s]?\}/g;
     regEx.nL = /\\newline/g;
     var math = [];
@@ -145,17 +145,24 @@ function Parser( index ) {
     this.config.fig_folder = 'fig';
     this.config.fig_path = that.config.fig_older + '/';
 
-    function createDocText( dest ) {
-        return $('<p class="doc-text cont-text"></p>').appendTo( dest );
+    function appendDocText( dest, line ) {
+        if( dest.hasClass( 'cont-text' ) )
+            return dest.append( ' ' + line );
+        else
+            return createDocText( line ).appendTo( dest );
     }
 
-    function getParentRootDest( dest, exclusive ) {
-        if( exclusive === undefined ) exclusive = false;
-        while( exclusive && dest.hasClass( 'cont-text' ) )
-            dest = dest.parent();
-        if( !dest.hasClass( 'cont-root' ) )
-            dest = dest.parents( '.cont-root' ).first();
-        return dest;
+    function createDocText( line ) {
+        return $( '<p class="doc-text cont-text">' + line + '</p>' );
+    }
+    function getBaseDest( dest ) {
+        return dest.closest( '.cont-root' );
+    }
+    function getRootDest( dest ) {
+        return dest.closest( '.cont-root-0' );
+    }
+    function getListDest( dest ) {
+        return dest.closest( '.cont-list' );
     }
 
     /**
@@ -186,65 +193,68 @@ function Parser( index ) {
     this.appendDocLine = function( line, dest ) {
         var matches = null;
         var listElem = null;
-        if( ( matches = regEx.chapter.exec( line ) ) != null ) {
-            dest = getParentRootDest( dest );
+        if( line == "" ) {
+            dest = getBaseDest( dest );
+            dest = createDocText( line ).appendTo( dest );
+        }
+        else if( ( matches = regEx.chapter.exec( line ) ) != null ) {
+            dest = getRootDest( dest );
             dest.append( '<h2>' + matches[1] + '</h2>' );
-            dest = createDocText( dest );
         }
         else if( ( matches = regEx.section.exec( line ) ) != null ) {
-            dest = getParentRootDest( dest );
+            dest = getRootDest( dest );
             dest.append( '<h3>' + matches[1]
                 + ' <small class="sect-subtitle"></small></h3>' );
-            dest = createDocText( dest );
         }
         else if( ( matches = regEx.input.exec( line ) ) != null ) {
-            dest = getParentRootDest( dest );
             var ids = matches[1].split( '/' );
-            dest.append( '<a href=# id="link-' + ids[0] + '-' + ids[1] + '">'
-                + index.getTitle( ids[0], ids[1] ) + '</a>' );
-            dest = createDocText( dest );
+            var list = getListDest( dest );
+            if( list.length == 0 )
+                dest = $( '<ul class="list-unstyled cont-list"></ul>' ).appendTo( dest );
+            else
+                dest = list;
+            dest.append( '<li class="list-bullet-text"><a href=# id="link-'
+                + ids[0] + '-' + ids[1] + '">'
+                + index.getTitle( ids[0], ids[1] ) + '</a></li>');
         }
-        else if( ( matches = regEx.desc.exec( line ) ) != null ) {
-            dest = getParentRootDest( dest );
-            dest = $( '<dl class="dl-horizontal cont-root"></dl>' )
-                .appendTo( dest );
+        else if( ( matches = regEx.desc_begin.exec( line ) ) != null ) {
+            dest = getBaseDest( dest );
+            dest = $( '<dl class="dl-horizontal cont-list"></dl>' ).appendTo( dest );
         }
-        else if( ( matches = regEx.item.exec( line ) ) != null ) {
-            dest = getParentRootDest( dest, true );
+        else if( ( matches = regEx.desc_elem.exec( line ) ) != null ) {
+            dest = getListDest( dest );
             dest.append('<dt>' + matches[1] + '</dt>' );
-            line = line.replace( regEx.item, "" );
-            dest = $( '<dd class="list-desc-text cont-text cont-root">' + line
-                + '</dd>' ).appendTo( dest );
+            line = line.replace( regEx.desc_elem, "" );
+            dest = $( '<dd class="list-desc-text cont-root"></dd>' ).appendTo( dest );
+            dest = createDocText( line ).appendTo( dest );
         }
-        else if( ( matches = regEx.endDesc.exec( line ) ) != null ) {
-            dest = dest.parent().parent();
+        else if( ( matches = regEx.desc_end.exec( line ) ) != null ) {
+            dest = getListDest( dest );
+            dest = getBaseDest( dest );
         }
-        else if( ( matches = regEx.bullet.exec( line ) ) != null ) {
-            dest = getParentRootDest( dest );
-            dest = $( '<ul class="list-bullet cont-root"></ul>' )
-                .appendTo( dest );
+        else if( ( matches = regEx.item_begin.exec( line ) ) != null ) {
+            dest = getBaseDest( dest );
+            dest = $( '<ul class="list-bullet cont-list"></ul>' ).appendTo( dest );
         }
-        else if( ( matches = regEx.itemBullet.exec( line ) ) != null ) {
-            dest = getParentRootDest( dest, true );
-            line = line.replace( regEx.itemBullet, "" );
-            dest = $( '<li class="list-bullet-text cont-text cont-root">' + line
-                + '</li>' ).appendTo( dest );
+        else if( ( matches = regEx.item_elem.exec( line ) ) != null ) {
+            dest = getListDest( dest );
+            line = line.replace( regEx.item_elem, "" );
+            dest = $( '<li class="list-bullet-text cont-root"></li>' ).appendTo( dest );
+            dest = createDocText( line ).appendTo( dest );
         }
-        else if( ( matches = regEx.endBullet.exec( line ) ) != null ) {
-            dest = dest.parent().parent();
+        else if( ( matches = regEx.item_end.exec( line ) ) != null ) {
+            dest = getListDest( dest );
+            dest = getBaseDest( dest );
         }
-        else if( ( matches = regEx.fig.exec( line ) ) != null ) {
-            dest = $( '<div class="hidden"></div>' ).appendTo( dest );
+        else if( ( matches = regEx.fig_begin.exec( line ) ) != null ) {
+            dest = $( '<div class="hidden cont-list"></div>' ).appendTo( dest );
         }
-        else if( ( matches = regEx.endFig.exec( line ) ) != null ) {
-            dest = dest.parent()
+        else if( ( matches = regEx.fig_end.exec( line ) ) != null ) {
+            dest = getListDest( dest );
+            dest = getBaseDest( dest );
         }
-        else if( dest.hasClass( 'cont-text' ) ) {
-            if( line === "" ) {
-                dest = getParentRootDest( dest );
-                dest = createDocText( dest );
-            }
-            dest.append( ' ' + line );
+        else {
+            dest = appendDocText( dest, line );
         }
         return dest;
     };
@@ -294,18 +304,18 @@ function Parser( index ) {
 
     this.replaceStyles = function( line ) {
         var matches = null;
-        if( ( matches = regEx.style.exec( line ) ) != null )
-            line = line.replace( regEx.style,
+        if( ( matches = regEx.style_emph.exec( line ) ) != null )
+            line = line.replace( regEx.style_emph,
                 function( regExStr, type, name ) {
                     return '<span class="span-' + type + '">' + name + '</span>';
             } );
-        if( ( matches = regEx.styleLink.exec( line ) ) != null )
-            line = line.replace( regEx.styleLink,
+        if( ( matches = regEx.style_link.exec( line ) ) != null )
+            line = line.replace( regEx.style_link,
                 function( regExStr, type, name ) {
                     return name;
             } );
-        if( ( matches = regEx.styleBold.exec( line ) ) != null )
-            line = line.replace( regEx.styleBold,
+        if( ( matches = regEx.style_bold.exec( line ) ) != null )
+            line = line.replace( regEx.style_bold,
                 function( regExStr, name ) {
                     return '<strong>' + name + '</strong>';
             } );
