@@ -1,17 +1,12 @@
 function Doc( $target, index_path ) {
 
-    this.config = [];
-    this.config.doc_path = "tex/";
-
     var that = this;
+    var doc_path = '.';
     var index = new Index( index_path );
     var parser = new Parser( index );
-    parser.config.fig_folder = 'fig';
-    parser.config.fig_path = that.config.doc_path
-        + parser.config.fig_folder + '/';
 
     function createDoc( folder, file ) {
-        var path = that.config.doc_path + folder + '/' + file + '.tex';
+        var path = doc_path + '/' + folder + '/' + file + '.tex';
         var doc = $( '<div class="doc cont-root cont-root-0"></div>' );
         $.ajax({
             async: false,
@@ -35,6 +30,12 @@ function Doc( $target, index_path ) {
 
     this.getIndex = function() {
         return index.j_index;
+    };
+
+    this.setDocPath = function( path ) {
+        path = path.replace(/\/+$/, "");
+        doc_path = path;
+        parser.config.fig_path = path + '/' + parser.config.fig_folder + '/';
     };
 
     this.printDoc = function( path, name ) {
