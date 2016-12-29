@@ -210,7 +210,8 @@ function Parser( index ) {
             var ids = matches[1].split( '/' );
             var list = getListDest( dest );
             if( list.length == 0 )
-                dest = $( '<ul class="list-unstyled cont-list"></ul>' ).appendTo( dest );
+                dest = $( '<ul class="list-unstyled cont-list"></ul>' )
+                    .appendTo( dest );
             else
                 dest = list;
             dest.append( '<li class="list-bullet-text"><a href=# id="link-'
@@ -219,13 +220,15 @@ function Parser( index ) {
         }
         else if( ( matches = regEx.desc_begin.exec( line ) ) != null ) {
             dest = getBaseDest( dest );
-            dest = $( '<dl class="dl-horizontal cont-list"></dl>' ).appendTo( dest );
+            dest = $( '<dl class="dl-horizontal cont-list"></dl>' )
+                .appendTo( dest );
         }
         else if( ( matches = regEx.desc_elem.exec( line ) ) != null ) {
             dest = getListDest( dest );
             dest.append('<dt>' + matches[1] + '</dt>' );
+            dest = $( '<dd class="list-desc-text cont-root"></dd>' )
+                .appendTo( dest );
             line = line.replace( regEx.desc_elem, "" );
-            dest = $( '<dd class="list-desc-text cont-root"></dd>' ).appendTo( dest );
             dest = createDocText( line ).appendTo( dest );
         }
         else if( ( matches = regEx.desc_end.exec( line ) ) != null ) {
@@ -234,12 +237,14 @@ function Parser( index ) {
         }
         else if( ( matches = regEx.item_begin.exec( line ) ) != null ) {
             dest = getBaseDest( dest );
-            dest = $( '<ul class="list-bullet cont-list"></ul>' ).appendTo( dest );
+            dest = $( '<ul class="list-bullet cont-list"></ul>' )
+                .appendTo( dest );
         }
         else if( ( matches = regEx.item_elem.exec( line ) ) != null ) {
             dest = getListDest( dest );
+            dest = $( '<li class="list-bullet-text cont-root"></li>' )
+                .appendTo( dest );
             line = line.replace( regEx.item_elem, "" );
-            dest = $( '<li class="list-bullet-text cont-root"></li>' ).appendTo( dest );
             dest = createDocText( line ).appendTo( dest );
         }
         else if( ( matches = regEx.item_end.exec( line ) ) != null ) {
@@ -283,7 +288,7 @@ function Parser( index ) {
                 var names = name.split( '.' );
                 var id = 'link-' + names[0] + '-' + names[1];
                 if( names[0] == that.config.fig_folder ) {
-                    title = '<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>';
+                    title = '<span class="glyphicon glyphicon-download-alt"></span>';
                     id = '';
                     href = that.config.fig_path + names[1] + ".pdf";
                 }
@@ -307,7 +312,8 @@ function Parser( index ) {
         if( ( matches = regEx.style_emph.exec( line ) ) != null )
             line = line.replace( regEx.style_emph,
                 function( regExStr, type, name ) {
-                    return '<span class="span-' + type + '">' + name + '</span>';
+                return '<span class="span-' + type + '">' + name
+                    + '</span>';
             } );
         if( ( matches = regEx.style_link.exec( line ) ) != null )
             line = line.replace( regEx.style_link,
