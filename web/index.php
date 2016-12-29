@@ -43,22 +43,9 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li class="dropdown">
+                        <li id="toc-chap" class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Inhalt<span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-<?php
-$string = file_get_contents( "index.json" );
-$json_a = json_decode( $string, true );
-foreach( $json_a as $item ) {
-    if( $item['folder'] == "chap" )
-        echo '
-                                <li><a href="#doc-item" id="toc-'.$item['folder'].'-'.$item['file'].'">'.$item['name'].'</a></li>';
-}
-?>
-                            </ul>
                         </li>
-                    </ul>
-                    <ul class="nav navbar-nav">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">SF-Baum<span class="caret"></span></a>
                             <ul class="dropdown-menu">

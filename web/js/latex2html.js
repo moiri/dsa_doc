@@ -1,4 +1,4 @@
-function Doc( $target, $search ) {
+function Doc( $target ) {
 
     this.config = [];
     this.config.doc_path = "tex/";
@@ -33,7 +33,38 @@ function Doc( $target, $search ) {
         return doc;
     }
 
-    function registerSearch( $input ) {
+    this.getIndex = function() {
+        return index.j_index;
+    };
+
+    this.printDoc = function( path, name ) {
+        $target.html( createDoc( path, name ) );
+        var backLink = '';
+        var subTitle = index.getTitle( 'chap', path );
+        if( subTitle != '' )
+            backLink = '<a href="#" id="link-chap-' + path
+                + '"> <span style="transform: scale(-1, 1)" '
+                + 'class="glyphicon glyphicon-share-alt"></span></a>';
+        $('.sect-subtitle').html( subTitle + backLink );
+        $('a[id|="link"]').click( function( e ) {
+            var path = $( this ).attr( 'id' ).split( '-' );
+            that.printDoc( path[1], path[2] );
+        });
+    };
+
+    this.printToc = function( $target, folder ) {
+        items = index.getList( folder );
+        $target = $( '<ul class="dropdown-menu"></ul>' ).appendTo( $target );
+        $.each( items, function( idx, item ) {
+            $( '<li><a href="#">' + item.name + '</a></li>' )
+                .appendTo( $target )
+                .click( function( e ) {
+                    that.printDoc( item.folder, item.file );
+                });
+        });
+    };
+
+    this.registerSearch = function( $input ) {
         $input.typeahead({
             source: index.j_index,
             displayText: function( item ) {
@@ -49,25 +80,6 @@ function Doc( $target, $search ) {
             that.printDoc( current.folder, current.file );
         });
     };
-
-    this.getIndex = function() {
-        return index.j_index;
-    };
-
-    this.printDoc = function( path, name ) {
-        $target.html( createDoc( path, name ) );
-        var backLink = '';
-        var subTitle = index.getTitle( 'chap', path );
-        if( subTitle != '' )
-            backLink = '<a href="#" id="link-chap-' + path + '"> <span style="transform: scale(-1, 1)" class="glyphicon glyphicon-share-alt"></span></a>';
-        $('.sect-subtitle').html( subTitle + backLink );
-        $('a[id|="link"]').click( function( e ) {
-            var path = $( this ).attr( 'id' ).split( '-' );
-            that.printDoc( path[1], path[2] );
-        });
-    };
-
-    registerSearch( $search );
 }
 
 function Index( path ) {
@@ -81,8 +93,18 @@ function Index( path ) {
                 title = item.name;
                 return false;
             }
-        })
+        });
         return title;
+    };
+
+    this.getList = function( folder ) {
+        var list = [];
+        $.each( that.j_index, function( idx, item ) {
+            if( item.folder == folder ) {
+                list.push( item );
+            }
+        })
+        return list;
     };
 
     $.ajax({
@@ -148,7 +170,7 @@ function Parser( index ) {
             type: 'GET',
             url: path,
             success: function( data ) {
-                var lines = data.split("\n");
+                var lines = data.split( "\n" );
                 $.each( lines, function( n, elem ) {
                     var matches = null;
                     if( ( ( matches = regEx.chapter.exec( elem ) ) != null ) ||
@@ -167,12 +189,13 @@ function Parser( index ) {
         var listElem = null;
         if( ( matches = regEx.chapter.exec( line ) ) != null ) {
             dest = getParentRootDest( dest );
-            dest.append('<h2>' + matches[1] + '</h2>');
+            dest.append( '<h2>' + matches[1] + '</h2>' );
             dest = createDocText( dest );
         }
         else if( ( matches = regEx.section.exec( line ) ) != null ) {
             dest = getParentRootDest( dest );
-            dest.append('<h3>' + matches[1] + ' <small class="sect-subtitle"></small></h3>');
+            dest.append( '<h3>' + matches[1]
+                + ' <small class="sect-subtitle"></small></h3>' );
             dest = createDocText( dest );
         }
         else if( ( matches = regEx.input.exec( line ) ) != null ) {
@@ -184,13 +207,14 @@ function Parser( index ) {
         }
         else if( ( matches = regEx.desc.exec( line ) ) != null ) {
             dest = getParentRootDest( dest );
-            dest = $('<dl class="dl-horizontal cont-root"></dl>').appendTo( dest );
+            dest = $( '<dl class="dl-horizontal cont-root"></dl>' )
+                .appendTo( dest );
         }
         else if( ( matches = regEx.item.exec( line ) ) != null ) {
             dest = getParentRootDest( dest, true );
             dest.append('<dt>' + matches[1] + '</dt>' );
             line = line.replace( regEx.item, "" );
-            dest = $('<dd class="list-desc-text cont-text cont-root">' + line
+            dest = $( '<dd class="list-desc-text cont-text cont-root">' + line
                 + '</dd>' ).appendTo( dest );
         }
         else if( ( matches = regEx.endDesc.exec( line ) ) != null ) {
@@ -198,7 +222,8 @@ function Parser( index ) {
         }
         else if( ( matches = regEx.bullet.exec( line ) ) != null ) {
             dest = getParentRootDest( dest );
-            dest = $('<ul class="list-bullet cont-root"></ul>').appendTo( dest );
+            dest = $( '<ul class="list-bullet cont-root"></ul>' )
+                .appendTo( dest );
         }
         else if( ( matches = regEx.itemBullet.exec( line ) ) != null ) {
             dest = getParentRootDest( dest, true );
@@ -210,7 +235,7 @@ function Parser( index ) {
             dest = dest.parent().parent();
         }
         else if( ( matches = regEx.fig.exec( line ) ) != null ) {
-            dest = $('<div class="hidden"></div>').appendTo( dest );
+            dest = $( '<div class="hidden"></div>' ).appendTo( dest );
         }
         else if( ( matches = regEx.endFig.exec( line ) ) != null ) {
             dest = dest.parent()
