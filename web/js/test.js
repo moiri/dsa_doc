@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var doc = new Doc( $( '#chap', 'index.json' ) );
+    var doc = new Doc( $( '#chap' ), 'index.json' );
     doc.printDoc( 'chap', 'intro' );
     doc.printToc( $( '#toc-chap' ), 'chap' );
     doc.registerSearch( $( '#query' ) );
