@@ -42,9 +42,8 @@ function Doc( $target, index_path ) {
         var backLink = '';
         var subTitle = index.getTitle( 'chap', path );
         if( subTitle != '' )
-            backLink = '<a href="#" id="link-chap-' + path
-                + '"> <span style="transform: scale(-1, 1)" '
-                + 'class="glyphicon glyphicon-share-alt"></span></a>';
+            backLink = ' <a href="#" id="link-chap-' + path + '"><span '
+                + 'class="glyphicon glyphicon-share-alt gly-flip"></span></a>';
         $('.sect-subtitle').html( subTitle + backLink );
         $('a[id|="link"]').click( function( e ) {
             var path = $( this ).attr( 'id' ).split( '-' );
