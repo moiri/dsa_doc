@@ -1,11 +1,10 @@
-function Doc( $target ) {
+function Doc( $target, index_path ) {
 
     this.config = [];
     this.config.doc_path = "tex/";
-    this.config.index_path = "index.json";
 
     var that = this;
-    var index = new Index( that.config.index_path );
+    var index = new Index( index_path );
     var parser = new Parser( index );
     parser.config.fig_folder = 'fig';
     parser.config.fig_path = that.config.doc_path + that.config.fig_older + '/';
