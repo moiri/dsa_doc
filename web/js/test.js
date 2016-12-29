@@ -1,25 +1,9 @@
-var __PATH = 'tex/';
-
 $(document).ready(function() {
-    var id = 'chap';
-    var $input = $('#query');
-    printDoc( 'chap', 'intro', id );
+    var doc = new Doc( $( '#chap' ), $( '#query' ), 'index.json' );
+    doc.printDoc( 'chap', 'intro' );
     $('[id|="toc"]').click( function( e ) {
         var path = $( this ).attr( 'id' ).split( '-' );
-        printDoc( path[1], path[2], id );
-    });
-    var j_index = getIndex();
-    $input.typeahead({
-        source:j_index,
-        displayText: function( item ){
-            // return ( item.folder === "sf" ) ? item.name + " (SF)" : item.name;
-            return item.name + ' (' + item.folder + ')';
-        },
-        afterSelect: function(){ $input.val(''); $input.blur(); }
-    });
-    $input.change(function() {
-        var current = $input.typeahead("getActive");
-        printDoc( current.folder, current.file, id );
+        doc.printDoc( path[1], path[2] );
     });
 });
 
