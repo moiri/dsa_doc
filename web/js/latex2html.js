@@ -7,7 +7,8 @@ function Doc( $target, index_path ) {
     var index = new Index( index_path );
     var parser = new Parser( index );
     parser.config.fig_folder = 'fig';
-    parser.config.fig_path = that.config.doc_path + that.config.fig_older + '/';
+    parser.config.fig_path = that.config.doc_path
+        + parser.config.fig_folder + '/';
 
     function createDoc( folder, file ) {
         var path = that.config.doc_path + folder + '/' + file + '.tex';
@@ -143,7 +144,7 @@ function Parser( index ) {
     math["\\geq"] = ' &ge; ';
     this.config = [];
     this.config.fig_folder = 'fig';
-    this.config.fig_path = that.config.fig_older + '/';
+    this.config.fig_path = that.config.fig_folder + '/';
 
     function appendDocText( dest, line ) {
         if( dest.hasClass( 'cont-text' ) )
